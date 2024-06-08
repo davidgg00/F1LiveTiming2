@@ -45,11 +45,6 @@ out/
 tmp/
 temp/
 
-# Docker
-Dockerfile
-docker-compose.yml
-docker-compose.override.yml
-
 # Miscellaneous
 *.bak
 *.tmp
