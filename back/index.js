@@ -109,9 +109,7 @@ wss.on('connection', (ws) => {
   console.log('New client connected');
 
   // Send the latest messages to the newly connected client
-  latestMessages.forEach(message => {
-    ws.send(message);
-  });
+  ws.send(JSON.stringify(objectState));
 
   ws.on('close', () => {
     console.log('Client disconnected');
