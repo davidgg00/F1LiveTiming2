@@ -88,6 +88,11 @@ const connectWebSocket = async (connectionToken, cookie) => {
 
   socket.on('close', () => {
     console.log('WebSocket connection closed.');
+    //reconect
+    setTimeout(() => {
+      console.log('Reconnecting...');
+      connectWebSocket(connectionToken, cookie);
+    }, 5000);
   });
 };
 

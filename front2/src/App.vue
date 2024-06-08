@@ -69,9 +69,26 @@ const sortedDriverList = computed(() => {
   return filteredAndSortedDrivers;
 });
 
+const sessionPartPrefix = (name: string) => {
+  switch (name) {
+    case "Sprint Qualifying":
+      return "SQ";
+    case "Qualifying":
+      return "Q";
+    default:
+      return "";
+  }
+};
+
+const tes222 = computed(() => {
+  const prueba = sessionPartPrefix(state.value.SessionInfo?.Name) + '' + TimingData.value.SessionPart;
+
+  return prueba;
+})
+
 /* const RaceControlMessages = computed(() => state.value.RaceControlMessages || {}); */
 const circuitKey = computed(() => state.value.SessionInfo?.Meeting.Circuit.Key || {});
-const OfficialName = computed(() => state.value.SessionInfo?.Meeting.Name + ' :   ' + state.value.SessionInfo?.Name || {});
+const OfficialName = computed(() => state.value.SessionInfo?.Meeting.Name + ' :   ' + state.value.SessionInfo?.Name + ' ' + sessionPartPrefix(state.value.SessionInfo?.Name) + '' + TimingData.value.SessionPart || {});
 /* const SessionData = computed(() => state.value.SessionData || {}); */
 const TimingData = computed(() => state.value.TimingData || {});
 /* const TeamRadio = computed(() => state.value.TeamRadio || {}); */
@@ -207,7 +224,7 @@ const initializeWebSocket = async () => {
     const negotiationData = await negotiate();
     const connectionToken = negotiationData.ConnectionToken;
     const cookie = negotiationData.Cookie;
-    socket = new WebSocket('ws://localhost:3000')
+    socket = new WebSocket('wss://f1socket.davidguisado.dev/')
     //socket = connectWebSocket(connectionToken, cookie);
 
     socket.onopen = () => {
@@ -240,6 +257,7 @@ const initializeWebSocket = async () => {
 
     socket.onmessage = async (event) => {
       console.log('typeof event.data:', typeof event.data);
+      console.log(event.data);
       state.value = JSON.parse(event.data);
       /* const messageData = event.data.toString();
       await processMessageData(messageData); */
