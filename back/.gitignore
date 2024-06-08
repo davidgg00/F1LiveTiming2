@@ -1,0 +1,63 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Build output
+dist/
+build/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs and editors
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*~
+
+# Local build outputs
+out/
+tmp/
+temp/
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# Miscellaneous
+*.bak
+*.tmp
+*.log
+
+# Ignore specific folders in frontend and backend
+/front/node_modules/
+/front/dist/
+
+/back/node_modules/
+/back/dist/
