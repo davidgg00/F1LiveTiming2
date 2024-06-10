@@ -1,9 +1,9 @@
 version: '3'
 services:
   front:
-    container_name: front
+    container_name: front2
     build:
-      context: ./front
+      context: ./front2
       dockerfile: Dockerfile
     ports:
       - "9086:8080"
