@@ -66,6 +66,8 @@ const connectWebSocket = async (connectionToken, cookie) => {
   socket.on('message', (data) => {
     // Process the message data
     processMessageData(data.toString());;
+
+    console.log(objectState?.Position?.Position[0]?.Entries[1]);
     
     
     // Store the latest message
@@ -91,12 +93,12 @@ const connectWebSocket = async (connectionToken, cookie) => {
     //reconect
     setTimeout(() => {
       console.log('Reconnecting...');
-      connectWebSocket(connectionToken, cookie);
+      initializeWebSocket();
     }, 5000);
   });
 };
 
-const initializeWebSocket = async () => {
+const initializeWebSocket = async () => {1
   try {
     const negotiationData = await negotiate();
     const connectionToken = negotiationData.ConnectionToken;
@@ -128,7 +130,6 @@ server.listen(3000, () => {
 
 
 const processMessageData = async (data) => {
-  console.log('Procesando mensaje:', data);
   const linesArray = data.split('\n');
   for (let i = 0; i < linesArray.length; i++) {
     const line = linesArray[i].trim();
