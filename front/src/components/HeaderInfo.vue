@@ -44,8 +44,6 @@ onMounted(() => {
     formattedTrackStatus.value = getTrackStatusObject(trackStatus.value?.Status);
     interval = setInterval(() => {
         const currentTime = endTime.value;
-        currentTime.setSeconds(currentTime.getSeconds() - 1);
-        formattedTimeLeft.value = formatDateToTimeString(currentTime);
 
         if (
             currentTime.getHours() === 0 &&
@@ -53,9 +51,14 @@ onMounted(() => {
             currentTime.getSeconds() === 0
         ) {
             clearInterval(interval);
+        } else {
+            currentTime.setSeconds(currentTime.getSeconds() - 1);
+            formattedTimeLeft.value = formatDateToTimeString(currentTime);
         }
+
     }, 1000);
 });
+
 
 onUnmounted(() => {
     clearInterval(interval);
