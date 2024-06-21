@@ -59,7 +59,7 @@ const formatData = async () => {
         const stints = Object.values(TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints);
         const currentStint = stints ? stints[stints.length - 1] : null;
 
-        const gap = driverTiming?.IntervalToPositionAhead?.Value ?? timingData.value?.Lines?.[driverNumber];
+        const gap = driverTiming?.IntervalToPositionAhead?.Value ?? timingData.value?.Lines?.[driverNumber].TimeDiffToPositionAhead;
 
         let lapTimeClass = '';
         if (driverTiming?.LastLapTime?.OverallFastest) {

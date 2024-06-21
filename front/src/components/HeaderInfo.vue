@@ -9,7 +9,7 @@
             <div :class="['flag', formattedTrackStatus.class]">
                 <span>{{ formattedTrackStatus.message }}</span>
             </div>
-            <div v-if="lapCount">
+            <div v-if="lapCount?.CurrentLap">
                 <span class="lapCount">{{ lapCount.CurrentLap }} / {{ lapCount.TotalLaps }}</span>
             </div>
         </div>
