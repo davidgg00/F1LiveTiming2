@@ -6,6 +6,10 @@ export interface TimingData {
     Lines: { [key: string]: TimingDataLine };
     Withheld: boolean;
     _kf: boolean;
+    NoEntries:        number[];
+    SessionPart:      number;
+    CutOffTime:       string;
+    CutOffPercentage: string;
 }
 
 export interface TimingDataLine {
@@ -26,7 +30,20 @@ export interface TimingDataLine {
     LastLapTime: LastLapTime;
     NumberOfLaps?: number;
     NumberOfPitStops?: number;
+    KnockedOut: boolean,
+    Stats:                   Stat[];
+    BestLapTimes:            Best[];
 }
+
+export interface Stat {
+    TimeDiffToFastest:       string;
+    TimeDifftoPositionAhead: string;
+}
+
+export interface Best {
+    Value?: string;
+}
+
 
 export interface DriverTimingData {
     TimeDiffToFastest: string
@@ -44,7 +61,8 @@ export interface DriverTimingData {
     Speeds: Speeds
     BestLapTime: BestLapTime
     LastLapTime: LastLapTime
-    NumberOfLaps: number
+    NumberOfLaps: number,
+    KnockedOut: boolean
 }
 
 export interface BestLapTime {

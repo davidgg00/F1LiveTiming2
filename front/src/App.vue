@@ -84,9 +84,11 @@ watch(RaceControlMessages, (newValue) => {
   const messages = Object.values(newValue?.Messages || []);
   const newValueFormatted = messages?.map(message => {
     const date = new Date(message.Utc);
+    const options = { hour: '2-digit', minute: '2-digit' };
+    const timeString = date.toLocaleTimeString('en-GB', options);
     return {
       ...message,
-      hour: `${date.getUTCHours().toString().padStart(2, '0')}:${date.getUTCMinutes().toString().padStart(2, '0')}`
+      hour: timeString
     };
   }).sort((a, b) => new Date(b.Utc).getTime() - new Date(a.Utc).getTime());
   sortedMessages.value = newValueFormatted;
@@ -215,7 +217,8 @@ const initializeWebSocket = async () => {
     };
 
     socket.onmessage = async (event) => {
-      console.log(JSON.parse(event.data)?.Position?.Position[0]?.Entries[1]);
+      console.log('mensaje!!');
+      console.log(event.data);
       state.value = JSON.parse(event.data);
       prueba = JSON.parse(event.data);
     };

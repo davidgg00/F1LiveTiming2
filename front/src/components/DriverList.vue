@@ -6,7 +6,7 @@ import { CarData } from '../interfaces/CarData'; */
 import { TimingData, TimingDataLine } from '../interfaces/TimingData.interface';
 import { DriverList } from '../interfaces/Driver.interface';
 
-import type { Header, Item } from "vue3-easy-data-table";
+import type { BodyRowClassNameFunction, Header, Item } from "vue3-easy-data-table";
 import Sector from './Sector.vue';
 import { Stint } from '../interfaces/TimingAppData.interface';
 
@@ -27,6 +27,7 @@ const headers: Header[] = [
     { text: "Position", value: "position" },
     { text: "Name", value: "name" },
     { text: "Lap", value: "lap" },
+    { text: "Interval", value: "interval" },
     { text: "GAP", value: "gap" },
     { text: "STINT", value: "stint" },
     { text: "Sectors", value: "sectors" },
@@ -58,9 +59,15 @@ const formatData = async () => {
 
         const stints = Object.values(TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints);
         const currentStint = stints ? stints[stints.length - 1] : null;
+        const interval =
+            driverTiming?.IntervalToPositionAhead?.Value ??
+            (timingData.value?.Lines?.[driverNumber].Stats[timingData?.value.SessionPart ? timingData.value.SessionPart - 1 : 0].TimeDifftoPositionAhead) ??
+            timingData.value?.Lines?.[driverNumber].TimeDiffToPositionAhead;
 
-        const gap = driverTiming?.IntervalToPositionAhead?.Value ?? timingData.value?.Lines?.[driverNumber].TimeDiffToPositionAhead;
+        const gap = driverTiming?.TimeDiffToFastest?.Value ??
+            (timingData.value?.Lines?.[driverNumber].Stats[timingData?.value.SessionPart ? timingData.value.SessionPart - 1 : 0].TimeDiffToFastest) ??
 
+            timingData.value?.Lines?.[driverNumber].TimeDiffToFastest;
         let lapTimeClass = '';
         if (driverTiming?.LastLapTime?.OverallFastest) {
             lapTimeClass = 'overall-fastest';
@@ -72,13 +79,17 @@ const formatData = async () => {
             position: driver.Line,
             lap: driverTiming?.NumberOfLaps,
             gap: gap,
+            interval: interval,
             name: driver.Tla,
             stint: currentStint,
             sectors: driverTiming,
             time: driverTiming?.LastLapTime?.Value || '',
             fastestLap,
             teamColor: driver.TeamColour,
-            lapTimeClass: lapTimeClass
+            lapTimeClass: lapTimeClass,
+            retired: timingData.value?.Lines?.[driverNumber].Retired,
+            stopped: timingData.value?.Lines?.[driverNumber].Stopped,
+            knockedOut: timingData.value?.Lines?.[driverNumber].KnockedOut,
         };
 
         drivers2.push(driverDataItem);
@@ -86,6 +97,11 @@ const formatData = async () => {
 
     driverData.value = drivers2;
     items.value = drivers2;
+};
+
+const isDriverKnockedOut: BodyRowClassNameFunction = (item: Item): string => {
+    if (item.stopped || item.retired || item.knockedOut) return 'opacity-row';
+    return '';
 };
 
 watch(drivers, async (newValue, oldValue) => {
@@ -97,7 +113,7 @@ watch(drivers, async (newValue, oldValue) => {
 <template>
     <div v-if="props.drivers.length > 0" class="driver-table-container">
         <EasyDataTable :headers="headers" :items="items" :hide-footer="true" table-class-name="customize-table"
-            header-text-direction="center" body-text-direction="center">
+            header-text-direction="center" body-text-direction="center" :body-row-class-name="isDriverKnockedOut">
             <template #item-position="{ position, teamColor }">
                 <div class="posColor">
                     <p class="position">{{ position }}</p>
@@ -123,6 +139,9 @@ watch(drivers, async (newValue, oldValue) => {
             </template>
             <template #item-gap="{ gap }">
                 <p class="gap"> {{ gap }}</p>
+            </template>
+            <template #item-interval="{ interval }">
+                <p class="gap"> {{ interval }}</p>
             </template>
             <template #item-lap="{ lap }">
                 <p class="nlap"> {{ lap }}</p>

@@ -18,14 +18,23 @@ const { raceControlMessages } = toRefs(props);
 const sortedMessages = ref([]);
 
 watch(raceControlMessages, (newValue) => {
-    const newValueFormatted = newValue?.Messages?.map(message => {
-        const date = new Date(message.Utc);
-        return {
-            ...message,
-            hour: `${date.getUTCHours().toString().padStart(2, '0')}:${date.getUTCMinutes().toString().padStart(2, '0')}`
-        };
-    }).sort((a, b) => new Date(b.Utc).getTime() - new Date(a.Utc).getTime()); // Orden descendente
-    sortedMessages.value = newValueFormatted;
+    console.log(newValue);
+    if (newValue?.Messages) {
+        const newValueFormatted = newValue.Messages.map(message => {
+            const date = new Date(message.Utc);
+            const options = { hour: '2-digit', minute: '2-digit' };
+            const timeString = date.toLocaleTimeString('en-GB', options);
+            console.log('message', message, 'timeString', timeString);
+            return {
+                ...message,
+                hour: timeString
+            };
+        }).sort((a, b) => new Date(b.Utc) - new Date(a.Utc)); // Orden descendente
+
+        sortedMessages.value = newValueFormatted;
+    } else {
+        sortedMessages.value = [];
+    }
 }, { immediate: true, deep: true });
 </script>
 
