@@ -70,7 +70,7 @@ const tes222 = computed(() => {
 })
 
 const circuitKey = computed(() => state.value.SessionInfo?.Meeting.Circuit.Key || {});
-const OfficialName = computed(() => state.value.SessionInfo?.Meeting.Name + ' :   ' + state.value.SessionInfo?.Name + ' ' + sessionPartPrefix(state.value.SessionInfo?.Name) + '' + (TimingData.value.SessionPart ?? '') || {});
+const OfficialName = computed(() => state.value.SessionInfo?.Meeting.Name + ' :   ' + state.value.SessionInfo?.Name + ' ' + sessionPartPrefix(state.value.SessionInfo?.Name) + '' + (TimingData.value.SessionPart && state.value.SessionInfo?.Name != 'Race' ? TimingData.value.SessionPart : '') || {});
 const TimingData = computed(() => state.value.TimingData || {});
 const CarData = computed(() => state.value.CarData || {});
 const position = computed(() => state.value?.Position?.Position[state.value?.Position.Position.length - 1] || {});
@@ -361,7 +361,7 @@ body {
 .main {
   display: flex;
   justify-content: space-between;
-  background: #1e1e1e;
+  background: #161616;
   color: white;
   flex: 1 1 auto;
   overflow: hidden;
@@ -379,7 +379,8 @@ body {
   display: flex;
   flex-direction: column;
   width: 60%;
-  overflow-y: auto;
+  overflow-y: hidden;
+  max-height: 100%;
 }
 
 button {

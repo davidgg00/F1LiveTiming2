@@ -171,7 +171,7 @@ const pathD = computed(() => {
 }
 
 .map-wrapper {
-  height: fit-content;
+  height: 50%;
   border-bottom: 1px solid #444;
 }
 

@@ -225,15 +225,15 @@ watch(drivers, async (newValue, oldValue) => {
 
     --easy-table-header-font-size: 10px;
     --easy-table-header-font-color: #fff;
-    --easy-table-header-background-color: #1a1a1a;
+    --easy-table-header-background-color: #161616;
 
     --easy-table-header-item-padding: 5px 10px;
 
     --easy-table-body-even-row-font-color: #fff;
-    --easy-table-body-even-row-background-color: #1a1a1a;
+    --easy-table-body-even-row-background-color: #161616;
 
     --easy-table-body-row-font-color: #fff;
-    --easy-table-body-row-background-color: #1a1a1a;
+    --easy-table-body-row-background-color: #161616;
     --easy-table-body-row-height: 30px;
     --easy-table-body-row-hover-color: #282828;
 

@@ -60,9 +60,10 @@ watch(raceControlMessages, (newValue) => {
     width: 99%;
     margin: 0 auto;
     font-family: Arial, sans-serif;
-    background-color: #1a1a1a;
+    background-color: #161616;
     padding: 20px 0px;
     border-radius: 10px;
+    height: 20%;
 }
 
 .title {

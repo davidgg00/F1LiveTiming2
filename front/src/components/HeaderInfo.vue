@@ -9,7 +9,7 @@
             <div :class="['flag', formattedTrackStatus.class]">
                 <span>{{ formattedTrackStatus.message }}</span>
             </div>
-            <div v-if="lapCount?.CurrentLap">
+            <div v-if="lapCount?.CurrentLap" id="lapWrapper">
                 <span class="lapCount">{{ lapCount.CurrentLap }} / {{ lapCount.TotalLaps }}</span>
             </div>
         </div>
@@ -75,6 +75,12 @@ watch(trackStatus, () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
+#lapWrapper {
+    margin-top: 5px;
+}
+
 @media screen and (max-width: 1150px) {
     h1 {
         font-size: 1em !important;
@@ -108,10 +114,11 @@ watch(trackStatus, () => {
 }
 
 header {
-    background-color: #1c1c1c;
+    font-family: 'Roboto', sans-serif;
+    background-color: #161616;
     color: white;
     text-align: center;
-    padding: 20px;
+    padding: 20px 20px 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -141,7 +148,7 @@ p {
 .lapCount {
     font-size: 1.2em;
     font-weight: bold;
-    margin: 0 10px;
+    margin: 0 20px;
 }
 
 .flag:hover {
