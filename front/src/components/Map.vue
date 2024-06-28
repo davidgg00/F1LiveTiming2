@@ -165,14 +165,18 @@ const pathD = computed(() => {
 </script>
 
 <style scoped>
+svg {
+  max-height: 100%;
+}
+
 .stroke-gray-800 {
   stroke: #ccc;
   filter: drop-shadow(0px 0px 150px rgba(134, 134, 134, 0.5));
 }
 
 .map-wrapper {
-  height: 50%;
   border-bottom: 1px solid #444;
+  height: 60%;
 }
 
 .animate-move {
