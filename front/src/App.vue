@@ -217,8 +217,6 @@ const initializeWebSocket = async () => {
     };
 
     socket.onmessage = async (event) => {
-      console.log('mensaje!!');
-      console.log(event.data);
       state.value = JSON.parse(event.data);
       prueba = JSON.parse(event.data);
     };

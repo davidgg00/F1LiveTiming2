@@ -18,7 +18,6 @@ const { raceControlMessages } = toRefs(props);
 const sortedMessages = ref([]);
 
 watch(raceControlMessages, (newValue) => {
-    console.log(newValue);
     if (newValue?.Messages) {
         const newValueFormatted = newValue.Messages.map(message => {
             const date = new Date(message.Utc);

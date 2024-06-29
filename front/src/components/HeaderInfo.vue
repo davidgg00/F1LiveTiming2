@@ -13,7 +13,6 @@
                 <span class="lapCount">{{ lapCount.CurrentLap }} / {{ lapCount.TotalLaps }}</span>
             </div>
         </div>
-
     </header>
 </template>
 
@@ -29,49 +28,43 @@ const props = defineProps({
     lapCount: Object,
 });
 
-
 const { gpName, timeLeftSession, trackStatus, lapCount } = toRefs(props);
-const endTime = ref(new Date());
+const endTime = ref<Date>(new Date());
 const formattedTimeLeft = ref('');
-
-const formattedTrackStatus = ref({})
-
+const formattedTrackStatus = ref<{ class: string, message: string }>({ class: '', message: '' });
 let interval: ReturnType<typeof setInterval>;
 
-onMounted(() => {
+const updateTimeLeft = () => {
+    const currentTime = endTime.value;
+    if (currentTime.getHours() === 0 && currentTime.getMinutes() === 0 && currentTime.getSeconds() === 0) {
+        clearInterval(interval);
+    } else {
+        currentTime.setSeconds(currentTime.getSeconds() - 1);
+        formattedTimeLeft.value = formatDateToTimeString(currentTime);
+    }
+};
+
+const initializeTimeLeft = () => {
     endTime.value = parseTimeStringToDate(timeLeftSession.value);
     formattedTimeLeft.value = formatDateToTimeString(endTime.value);
+};
+
+const initializeTrackStatus = () => {
     formattedTrackStatus.value = getTrackStatusObject(trackStatus.value?.Status);
-    interval = setInterval(() => {
-        const currentTime = endTime.value;
+};
 
-        if (
-            currentTime.getHours() === 0 &&
-            currentTime.getMinutes() === 0 &&
-            currentTime.getSeconds() === 0
-        ) {
-            clearInterval(interval);
-        } else {
-            currentTime.setSeconds(currentTime.getSeconds() - 1);
-            formattedTimeLeft.value = formatDateToTimeString(currentTime);
-        }
-
-    }, 1000);
+onMounted(() => {
+    initializeTimeLeft();
+    initializeTrackStatus();
+    interval = setInterval(updateTimeLeft, 1000);
 });
-
 
 onUnmounted(() => {
     clearInterval(interval);
 });
 
-watch(timeLeftSession, () => {
-    endTime.value = parseTimeStringToDate(timeLeftSession.value);
-    formattedTimeLeft.value = formatDateToTimeString(endTime.value);
-});
-
-watch(trackStatus, () => {
-    formattedTrackStatus.value = getTrackStatusObject(trackStatus.value?.Status);
-});
+watch(timeLeftSession, initializeTimeLeft);
+watch(trackStatus, initializeTrackStatus);
 </script>
 
 <style scoped>
@@ -172,12 +165,10 @@ p {
 
 .flag.yellow-flag {
     animation: pulse 1s infinite alternate;
-    /* Animación para el flag amarillo */
 }
 
 .flag.red-flag {
     animation: blink 1s infinite;
-    /* Animación para el flag rojo */
 }
 
 @keyframes pulse {

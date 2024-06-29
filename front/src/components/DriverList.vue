@@ -59,13 +59,15 @@ const formatData = async () => {
 
         const stints = Object.values(TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints);
         const currentStint = stints ? stints[stints.length - 1] : null;
+        console.log(driverTiming);
         const interval =
             driverTiming?.IntervalToPositionAhead?.Value ??
-            (timingData.value?.Lines?.[driverNumber].Stats[timingData?.value.SessionPart ? timingData.value.SessionPart - 1 : 0].TimeDifftoPositionAhead) ??
-            timingData.value?.Lines?.[driverNumber].TimeDiffToPositionAhead;
+            (timingData.value?.Lines?.[driverNumber]?.Stats ? timingData.value?.Lines?.[driverNumber]?.Stats[timingData?.value?.SessionPart ? timingData.value?.SessionPart - 1 : 0].TimeDifftoPositionAhead : null) ??
+            timingData.value?.Lines?.[driverNumber]?.TimeDiffToPositionAhead;
 
-        const gap = driverTiming?.TimeDiffToFastest?.Value ??
-            (timingData.value?.Lines?.[driverNumber].Stats[timingData?.value.SessionPart ? timingData.value.SessionPart - 1 : 0].TimeDiffToFastest) ??
+        const gap =
+            driverTiming?.GapToLeader ??
+            (timingData.value?.Lines?.[driverNumber]?.Stats ? timingData.value?.Lines?.[driverNumber]?.Stats[timingData?.value?.SessionPart ? timingData.value?.SessionPart - 1 : 0].TimeDiffToFastest : null) ??
 
             timingData.value?.Lines?.[driverNumber].TimeDiffToFastest;
         let lapTimeClass = '';
