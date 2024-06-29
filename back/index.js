@@ -115,6 +115,8 @@ initializeWebSocket();
 wss.on('connection', (ws) => {
   console.log('New client connected');
 
+  updateRemainingTime();
+
   // Send the latest messages to the newly connected client
   ws.send(JSON.stringify(objectState));
 
@@ -128,6 +130,21 @@ server.listen(3000, () => {
 });
 
 
+let sessionStartTime = null;
+let sessionDuration = null;
+const updateRemainingTime = () => {
+  if (sessionStartTime && sessionDuration) {
+    const now = new Date();
+    const elapsedTime = (now - sessionStartTime) / 1000; // time in seconds
+    const remainingTime = sessionDuration - elapsedTime;
+    if (remainingTime >= 0) {
+      objectState.ExtrapolatedClock = { ...objectState.ExtrapolatedClock, Remaining: remainingTime };
+    } else {
+      objectState.ExtrapolatedClock = { ...objectState.ExtrapolatedClock, Remaining: 0 };
+    }
+  }
+};
+
 
 const processMessageData = async (data) => {
   const linesArray = data.split('\n');
@@ -140,6 +157,10 @@ const processMessageData = async (data) => {
           lineJSON.R["CarData"] = parseCompressed(lineJSON.R["CarData.z"]);
         if (lineJSON.R["Position.z"])
           lineJSON.R["Position"] = parseCompressed(lineJSON.R["Position.z"]);
+        if (lineJSON.R["ExtrapolatedClock"]?.Remaining) {
+          sessionStartTime = new Date(); // Update start time on receiving new Remaining
+          sessionDuration = lineJSON.R["ExtrapolatedClock"].Remaining;
+        }
         objectState = deepObjectMerge(objectState, lineJSON.R);
       }
       if (lineJSON.M) {
@@ -150,6 +171,10 @@ const processMessageData = async (data) => {
             const [parsedField] = field.split(".");
             field = parsedField;
             value = parseCompressed(value);
+          }
+          if (field === "ExtrapolatedClock" && value.Remaining) {
+            sessionStartTime = new Date(); // Update start time on receiving new Remaining
+            sessionDuration = value.Remaining;
           }
           objectState = deepObjectMerge(objectState, { [field]: value });
         }
