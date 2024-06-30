@@ -59,7 +59,6 @@ const formatData = async () => {
 
         const stints = Object.values(TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints);
         const currentStint = stints ? stints[stints.length - 1] : null;
-        console.log(driverTiming);
         const interval =
             driverTiming?.IntervalToPositionAhead?.Value ??
             (timingData.value?.Lines?.[driverNumber]?.Stats ? timingData.value?.Lines?.[driverNumber]?.Stats[timingData?.value?.SessionPart ? timingData.value?.SessionPart - 1 : 0].TimeDifftoPositionAhead : null) ??

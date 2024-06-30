@@ -11,12 +11,6 @@
         <circle :cx="driverPoint.rotatedPosition.x" :cy="driverPoint.rotatedPosition.y" r="100"
           :fill="driverPoint.TeamColour" stroke="black" stroke-width="2" :opacity="driverPoint.inPit ? 0.5 : 1"
           class="animate-move" />
-        <!--      
-          <text :x="driverPoint.rotatedTextPosition.x" :y="driverPoint.rotatedTextPosition.y" font-size="200"
-          :fill="driverPoint.TeamColour" dominant-baseline="middle" stroke="black" stroke-width="0.5"
-          :opacity="driverPoint.inPit ? 0.5 : 1" class="animate-move">
-          {{ driverPoint.driverName }}
-        </text> -->
         <foreignObject :x="driverPoint.rotatedTextPosition.x + 50" :y="driverPoint.rotatedTextPosition.y - 100"
           width="600" height="400" class="animate-move">
           <div

@@ -94,8 +94,7 @@ watch(RaceControlMessages, (newValue) => {
   sortedMessages.value = newValueFormatted;
 }, { immediate: true, deep: true });
 
-const processMessageData = async (data: string) => {
-  console.log('Procesando mensaje:', data);
+const processMessageData = async (data) => {
   const linesArray = data.split('\n');
   for (let i = 0; i < linesArray.length; i++) {
     const line = linesArray[i].trim();
@@ -120,7 +119,6 @@ const processMessageData = async (data: string) => {
           state.value = deepObjectMerge(state.value, { [field]: value });
         }
       }
-      console.log(state.value);
     }
   }
 };
@@ -187,7 +185,7 @@ const initializeWebSocket = async () => {
     const negotiationData = await negotiate();
     const connectionToken = negotiationData.ConnectionToken;
     const cookie = negotiationData.Cookie;
-    socket = new WebSocket('wss://f1socket.davidguisado.dev/');
+    socket = new WebSocket('ws://localhost:3000');
     socket.onopen = () => {
       console.log('WebSocket connection established.');
       socket?.send(JSON.stringify({
@@ -217,7 +215,10 @@ const initializeWebSocket = async () => {
     };
 
     socket.onmessage = async (event) => {
-      state.value = JSON.parse(event.data);
+      setTimeout(() => {
+        state.value = JSON.parse(event.data);
+      }, tiempoPausa.value);
+
       prueba = JSON.parse(event.data);
     };
 
@@ -233,37 +234,112 @@ const initializeWebSocket = async () => {
   }
 };
 
-const pauseStartTime = ref<number | null>(null);
+const connectWebSocket = async (connectionToken, cookie) => {
+  const hub = encodeURIComponent(JSON.stringify([{ name: "Streaming" }]));
+  const encodedToken = encodeURIComponent(connectionToken);
+  const url = `wss://livetiming.formula1.com/signalr/connect?clientProtocol=1.5&transport=webSockets&connectionToken=${encodedToken}&connectionData=${hub}`;
 
+  console.log('Llego!!!')
+  const socket = new WebSocket(url);
+
+  console.log('Llego2!!!!')
+
+  console.log(url);
+
+  socket.onopen = () => {
+    console.log('WebSocket connection established.');
+    socket.send(JSON.stringify({
+      H: "Streaming",
+      M: "Subscribe",
+      A: [
+        [
+          "Heartbeat",
+          "CarData.z",
+          "Position.z",
+          "ExtrapolatedClock",
+          "TimingStats",
+          "TimingAppData",
+          "WeatherData",
+          "TrackStatus",
+          "DriverList",
+          "RaceControlMessages",
+          "SessionInfo",
+          "SessionData",
+          "LapCount",
+          "TimingData",
+          "TeamRadio",
+        ],
+      ],
+      I: 1,
+    }));
+  };
+
+  socket.onmessage = (event) => {
+    const data = event.data;
+    // Process the message data
+    setTimeout(() => {
+      processMessageData(data.toString());
+    }, tiempoPausa.value);
+
+
+
+    // Store the latest message
+    /* latestMessages.push(objectState);
+    if (latestMessages.length > 100) { // Keep the last 100 messages
+      latestMessages.shift();
+    } */
+
+  };
+
+  socket.onerror = (error) => {
+    console.error('WebSocket error:', error);
+  };
+
+  socket.onclose = () => {
+    console.log('WebSocket connection closed.');
+    // Reconnect
+    setTimeout(() => {
+      console.log('Reconnecting...');
+      connectWebSocket(connectionToken, cookie);
+    }, 5000);
+  };
+};
+
+
+
+const pauseStartTime = ref<number | null>(null);
+const tiempoPausa = ref<number>(0);
+const intervalId = ref(null);
 const pause = () => {
-  if (socket) {
+  if (!pauseStartTime.value) {
     pauseStartTime.value = Date.now();
-    socket.close();
-    socket = null;
+    // Iniciar un intervalo que actualiza tiempoPausa cada 100 ms
+    intervalId.value = setInterval(() => {
+      tiempoPausa.value = Date.now() - pauseStartTime.value;
+    }, 100);
   }
 };
 
-const resume = async () => {
-  if (!socket) {
-    const delay = Date.now() - (pauseStartTime.value || 0);
-    await initializeWebSocket();
-
-    if (socket) {
-      const originalOnMessage = socket.onmessage;
-      socket.onmessage = async (event) => {
-        await new Promise(resolve => setTimeout(resolve, delay));
-        if (originalOnMessage) {
-          originalOnMessage(event);
-        }
-      };
-    }
-
-    pauseStartTime.value = null;
+// Función para detener la pausa y actualizar la duración total de la pausa
+const resume = () => {
+  if (pauseStartTime.value) {
+    // Detener el intervalo
+    clearInterval(intervalId.value);
+    intervalId.value = null;
+    // Añadir la duración de la pausa al tiempo total de pausa acumulado
+    const pauseDuration = Date.now() - pauseStartTime.value;
+    tiempoPausa.value = pauseDuration;
+    /* pauseStartTime.value = null;  */// Resetear el tiempo de inicio de la pausa
   }
 };
 
 onMounted(async () => {
-  await initializeWebSocket();
+  const negotiationData = await negotiate();
+  const connectionToken = negotiationData.ConnectionToken;
+  const cookie = negotiationData.Cookie;
+
+  await connectWebSocket(connectionToken, cookie);
+  /* await initializeWebSocket(); */
 });
 </script>
 

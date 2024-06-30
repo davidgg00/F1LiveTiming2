@@ -35,6 +35,8 @@ const connectWebSocket = async (connectionToken, cookie) => {
     }
   });
 
+  console.log(url);
+
   socket.on('open', () => {
     console.log('WebSocket connection established.');
     socket.send(JSON.stringify({
@@ -157,10 +159,6 @@ const processMessageData = async (data) => {
           lineJSON.R["CarData"] = parseCompressed(lineJSON.R["CarData.z"]);
         if (lineJSON.R["Position.z"])
           lineJSON.R["Position"] = parseCompressed(lineJSON.R["Position.z"]);
-        if (lineJSON.R["ExtrapolatedClock"]?.Remaining) {
-          sessionStartTime = new Date(); // Update start time on receiving new Remaining
-          sessionDuration = lineJSON.R["ExtrapolatedClock"].Remaining;
-        }
         objectState = deepObjectMerge(objectState, lineJSON.R);
       }
       if (lineJSON.M) {
@@ -171,10 +169,6 @@ const processMessageData = async (data) => {
             const [parsedField] = field.split(".");
             field = parsedField;
             value = parseCompressed(value);
-          }
-          if (field === "ExtrapolatedClock" && value.Remaining) {
-            sessionStartTime = new Date(); // Update start time on receiving new Remaining
-            sessionDuration = value.Remaining;
           }
           objectState = deepObjectMerge(objectState, { [field]: value });
         }
