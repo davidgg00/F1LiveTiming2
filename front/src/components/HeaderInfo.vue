@@ -108,7 +108,7 @@ watch(trackStatus, initializeTrackStatus);
 
 header {
     font-family: 'Roboto', sans-serif;
-    background-color: #161616;
+    background-color: #121212;
     color: white;
     text-align: center;
     padding: 20px 20px 10px 20px;

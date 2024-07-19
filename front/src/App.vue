@@ -239,10 +239,7 @@ const connectWebSocket = async (connectionToken, cookie) => {
   const encodedToken = encodeURIComponent(connectionToken);
   const url = `wss://livetiming.formula1.com/signalr/connect?clientProtocol=1.5&transport=webSockets&connectionToken=${encodedToken}&connectionData=${hub}`;
 
-  console.log('Llego!!!')
   const socket = new WebSocket(url);
-
-  console.log('Llego2!!!!')
 
   console.log(url);
 
@@ -298,10 +295,13 @@ const connectWebSocket = async (connectionToken, cookie) => {
   socket.onclose = () => {
     console.log('WebSocket connection closed.');
     // Reconnect
-    setTimeout(() => {
+    setTimeout(async () => {
       console.log('Reconnecting...');
-      connectWebSocket(connectionToken, cookie);
-    }, 5000);
+      const negotiationData = await negotiate();
+      const connectionToken2 = negotiationData.ConnectionToken;
+      const cookie2 = negotiationData.Cookie;
+      connectWebSocket(connectionToken2, cookie2);
+    }, 1000);
   };
 };
 

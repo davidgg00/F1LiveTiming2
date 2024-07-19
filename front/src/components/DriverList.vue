@@ -149,9 +149,17 @@ watch(drivers, async (newValue, oldValue) => {
             </template>
         </EasyDataTable>
     </div>
+    <div id="secondaryDriverList">
+        <p v-for="driver in driverData">{{ driver.position }} - {{ driver.name }}</p>
+    </div>
 </template>
 
 <style scoped>
+#secondaryDriverList {
+    display: flex;
+    flex-direction: column;
+}
+
 /* Ajustar tamaño de fuente y padding para que la tabla quepa sin scroll horizontal */
 .driver-table-container {
     height: 100%;
