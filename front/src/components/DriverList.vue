@@ -57,7 +57,10 @@ const formatData = async () => {
         const driverTiming = timingData.value?.Lines?.[driverNumber];
         const fastestLap = timingStats.value?.Lines?.[driver.RacingNumber]?.PersonalBestLapTime?.Position == 1;
 
-        const stints = Object.values(TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints);
+        const stints = Object.values(
+            TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints ?? {}
+        );
+
         const currentStint = stints ? stints[stints.length - 1] : null;
         const interval =
             driverTiming?.IntervalToPositionAhead?.Value ??
