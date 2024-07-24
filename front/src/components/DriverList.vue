@@ -48,7 +48,6 @@ const props = defineProps({
 
 const { /* carData, */ timingData, timingStats, drivers, TimingAppData } = toRefs(props);
 
-const driverData = ref<DriverDataTable[]>([]);
 const items = ref<Item[]>([]);
 const formatData = async () => {
     const drivers2: DriverDataTable[] = [];
@@ -98,8 +97,6 @@ const formatData = async () => {
 
         drivers2.push(driverDataItem);
     }
-
-    driverData.value = drivers2;
     items.value = drivers2;
 };
 
@@ -151,9 +148,6 @@ watch(drivers, async (newValue, oldValue) => {
                 <p class="nlap"> {{ lap }}</p>
             </template>
         </EasyDataTable>
-    </div>
-    <div id="secondaryDriverList">
-        <p v-for="driver in driverData">{{ driver.position }} - {{ driver.name }}</p>
     </div>
 </template>
 

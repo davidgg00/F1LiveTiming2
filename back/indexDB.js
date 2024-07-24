@@ -7,9 +7,6 @@ const { parseCompressed, deepObjectMerge } = require('./utils/formatObject');
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-
-let latestMessages = []; // Store the latest messages
 
 let objectState = {}; // Store the object state
 
@@ -24,11 +21,10 @@ const negotiate = async () => {
 
 const connectWebSocket = async (connectionToken, cookie) => {
   const hub = encodeURIComponent(JSON.stringify([{ name: "Streaming" }]));
-  console.log('hub', hub);
   const encodedToken = encodeURIComponent(connectionToken);
   const url = `wss://livetiming.formula1.com/signalr/connect?clientProtocol=1.5&transport=webSockets&connectionToken=${encodedToken}&connectionData=${hub}`;
 
-  const socket = new WebSocket(url,[], {
+  const socket = new WebSocket(url, {
     headers: {
       'User-Agent': 'BestHTTP',
       'Accept-Encoding': 'gzip,identity',
@@ -45,45 +41,62 @@ const connectWebSocket = async (connectionToken, cookie) => {
       M: "Subscribe",
       A: [
         [
-          "Heartbeat",
+/*           "Heartbeat",
           "CarData.z",
           "Position.z",
           "ExtrapolatedClock",
           "TimingStats",
           "TimingAppData",
           "WeatherData",
-          "TrackStatus",
+          "TrackStatus", */
           "DriverList",
-          "RaceControlMessages",
+/*           "RaceControlMessages",
           "SessionInfo",
           "SessionData",
-          "LapCount",
+          "LapCount", */
           "TimingData",
-          "TeamRadio",
+          /* "TeamRadio", */
         ],
       ],
       I: 1,
     }));
   });
-
+  const previousState =  {};
   socket.on('message', (data) => {
     // Process the message data
     processMessageData(data.toString());;
 
-    
-    
-    // Store the latest message
-    /* latestMessages.push(objectState);
-    if (latestMessages.length > 100) { // Keep the last 100 messages
-      latestMessages.shift();
-    } */
+    const DriverList = Object.values(objectState?.DriverList || {}).filter(driver => typeof driver !== 'boolean');
+    const driversRacingNumber = DriverList.map(driver => driver.RacingNumber ? driver.RacingNumber : null);
 
-    // Broadcast data to all connected clients
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(objectState));
+
+    for (const driver of DriverList) {
+      const driverNumber = driver.RacingNumber;
+      const driverTiming = objectState?.TimingData?.Lines?.[driverNumber];
+      const lastLapTime = driverTiming?.LastLapTime;
+      if (driverTiming && lastLapTime) {
+        const objData = {
+          driverNumber: driverTiming.RacingNumber,
+          lastLapTime: lastLapTime.Value,
+          numberOfLaps: driverTiming.NumberOfLaps,
+        };
+  
+        // Check if the lastLapTime has changed
+        if ((!previousState[driverNumber] || previousState[driverNumber].lastLapTime !== objData.lastLapTime) && objData.lastLapTime && objData.numberOfLaps) {
+          console.log('----------------');
+          console.log('Driver Number:', driverNumber);
+          console.log('Last Lap Time:', objData.lastLapTime);
+          console.log('Number Of Laps:', objData.numberOfLaps);
+          console.log('----------------');
+        }
+  
+        // Update the previous state
+        previousState[driverNumber] = objData;
       }
-    });
+  
+    }
+
+  
   });
 
   socket.on('error', (error) => {
@@ -113,20 +126,6 @@ const initializeWebSocket = async () => {1
 };
 
 initializeWebSocket();
-
-wss.on('connection', (ws) => {
-  console.log('New client connected');
-
-  updateRemainingTime();
-
-  // Send the latest messages to the newly connected client
-  ws.send(JSON.stringify(objectState));
-
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
-});
-
 server.listen(3000, () => {
   console.log('Server running at http://localhost:3000');
 });

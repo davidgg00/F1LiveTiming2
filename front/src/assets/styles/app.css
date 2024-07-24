@@ -1,0 +1,136 @@
+body {
+    background-color: #1e1e1e;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  .main {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .driver-list-wrapper {
+    width: 40%;
+    border-right: 1px solid #444;
+    background: #2a2a2a;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+  }
+  
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    overflow-y: auto;
+  }
+  
+  @media screen and (max-width: 1650px) {
+    .driver-list-wrapper {
+      width: 60% !important;
+    }
+  
+    .wrapper {
+      width: 40% !important;
+    }
+  }
+  
+  @media screen and (max-width: 1150px) {
+    .main {
+      flex-direction: column;
+    }
+  
+    .driver-list-wrapper {
+      width: 100% !important;
+      border-right: none;
+      border-bottom: 1px solid #444;
+      min-height: 90vh;
+    }
+  
+    .wrapper {
+      width: 100% !important;
+      display: flex !important;
+      flex-direction: row !important;
+    }
+  
+    .map-wrapper {
+      width: 70% !important;
+    }
+  
+    .race-control-container {
+      width: 30% !important;
+    }
+  
+    .app-container {
+      height: auto !important;
+    }
+  }
+  
+  @media screen and (max-width: 950px) {
+    .wrapper {
+      flex-direction: column !important;
+    }
+  
+    .map-wrapper {
+      width: 100% !important;
+    }
+  
+    .race-control-container {
+      width: 100% !important;
+    }
+  }
+  
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .header-info {
+    flex: 0 0 auto;
+  }
+  
+  .main {
+    display: flex;
+    justify-content: space-between;
+    background: #161616;
+    color: white;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  
+  .driver-list-wrapper {
+    width: 40%;
+    border-right: 1px solid #444;
+    background: #2a2a2a;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+  }
+  
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    overflow-y: hidden;
+    max-height: 100%;
+  }
+  
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    border: none;
+    background-color: #555;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #666;
+  }
+  
+  .control-buttons {
+    text-align: center;
+    margin-top: 20px;
+  }
