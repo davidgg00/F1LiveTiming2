@@ -4,7 +4,11 @@ import { State } from "../interfaces/State.interface";
 import { negotiate } from "../utils/socket";
 import { processMessageData } from "./useProcessMessageData";
 
-const useWebSocket = (state: Ref<State>, tiempoPausa: Ref<number>) => {
+const useWebSocket = (
+  state: Ref<State>,
+  setState: (newState: any) => void,
+  tiempoPausa: Ref<number>
+) => {
   const connectWebSocket = async (connectionToken: string) => {
     const hub = encodeURIComponent(JSON.stringify([{ name: "Streaming" }]));
     const encodedToken = encodeURIComponent(connectionToken);
@@ -48,10 +52,8 @@ const useWebSocket = (state: Ref<State>, tiempoPausa: Ref<number>) => {
       const data = event.data;
       // Process the message data
       setTimeout(() => {
-        processMessageData(data.toString(), state);
+        processMessageData(data.toString(), state, setState);
       }, tiempoPausa.value);
-
-      console.log(state.value);
     };
 
     socket.onerror = (error) => {

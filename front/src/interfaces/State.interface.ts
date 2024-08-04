@@ -9,6 +9,7 @@ import { TimingAppData } from "./TimingAppData.interface";
 import { TimingStats } from "./TimingStats.interface";
 import { RaceControlMessages } from "./RaceControlMessages.interface";
 import { LapCount } from "./LapCount.interface";
+import { WeatherData } from "./WeatherData.interface";
 
 export interface State {
   //Heartbeat: Heartbeat
@@ -17,7 +18,7 @@ export interface State {
   ExtrapolatedClock?: ExtrapolatedClock;
   TimingStats?: TimingStats;
   TimingAppData?: TimingAppData;
-  // WeatherData: WeatherData
+  WeatherData?: WeatherData;
   TrackStatus?: TrackStatus;
   DriverList?: DriverList;
   RaceControlMessages?: RaceControlMessages;

@@ -25,29 +25,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, PropType, toRefs } from 'vue';
-import { DriverList } from '../interfaces/Driver.interface';
-import { TimingData } from '../interfaces/TimingData.interface';
-import { PositionElement } from '../interfaces/WelcomePosition.interface';
+import { useStateStore } from '../store/state';
+import { storeToRefs } from 'pinia';
 
-const props = defineProps({
-  position: Object as PropType<PositionElement>,
-  drivers: {
-    type: Array as PropType<DriverList>,
-    required: true,
-    default: [],
-  },
-  timingData: {
-    type: Object as PropType<TimingData>,
-    required: true,
-    default: {},
-  },
-  circuitKey: {
-    type: Number,
-    required: true,
-  },
-});
-
-const { position, drivers, timingData, circuitKey } = toRefs(props);
+const stateStore = useStateStore();
+const { timingData, sortedDriverList, sessionInfo, position } = storeToRefs(stateStore);
+const positions = computed(() => position.value?.Position[position.value?.Position.length - 1] || {});
+const circuitKey = computed(() => sessionInfo.value?.Meeting.Circuit.Key || {});
 const space = 1000;
 const rotationFIX = 90;
 
@@ -68,7 +52,6 @@ const fetchMapData = async () => {
   return await response.json();
 };
 
-const mapData = ref(null);
 const points = ref([]);
 const rotation = ref(0);
 const bounds = ref([null, null, null, null]);
@@ -98,14 +81,14 @@ const interpolatePositions = () => {
 };
 
 const updateDriverPoints = () => {
-  if (Object.keys(position.value).length > 0) {
-    driverPoints.value = Object.keys(position.value?.Entries).map(key => {
-      const driver = drivers.value.find(driver => driver.RacingNumber === key);
+  if (Object.keys(positions.value).length > 0) {
+    driverPoints.value = Object.keys(positions.value?.Entries).map(key => {
+      const driver = sortedDriverList.value.find(driver => driver.RacingNumber === key);
       const teamColour = driver ? driver.TeamColour : null;
       const driverName = driver ? driver.Tla : null;
       const inPit = timingData.value.Lines[key] ? timingData.value.Lines[key].InPit : null;
-      const rotatedPosition = rotate(position.value.Entries[key].X, position.value.Entries[key].Y, rotation.value, centerX.value, centerY.value);
-      const rotatedTextPosition = rotate(position.value.Entries[key].X + 150, position.value.Entries[key].Y, rotation.value, centerX.value, centerY.value);
+      const rotatedPosition = rotate(positions.value.Entries[key].X, positions.value.Entries[key].Y, rotation.value, centerX.value, centerY.value);
+      const rotatedTextPosition = rotate(positions.value.Entries[key].X + 150, positions.value.Entries[key].Y, rotation.value, centerX.value, centerY.value);
       return {
         racingNumber: key,
         TeamColour: `#${teamColour}`,

@@ -2,7 +2,11 @@ import { State } from "../interfaces/State.interface";
 import { Ref } from "vue";
 import { deepObjectMerge, parseCompressed } from "../utils";
 
-export const processMessageData = async (data: string, state: Ref<State>) => {
+export const processMessageData = async (
+  data: string,
+  state: Ref<State>,
+  setState: (newState: any) => void
+) => {
   const linesArray = data.split("\n");
   for (let i = 0; i < linesArray.length; i++) {
     const line = linesArray[i].trim();
@@ -20,7 +24,7 @@ export const processMessageData = async (data: string, state: Ref<State>) => {
               lineJSON.R["Position.z"]
             );
           }
-          state.value = deepObjectMerge(state.value, lineJSON.R);
+          setState(deepObjectMerge(state.value, lineJSON.R));
         }
         if (lineJSON.M) {
           for (const message of lineJSON.M) {
@@ -31,7 +35,7 @@ export const processMessageData = async (data: string, state: Ref<State>) => {
               field = parsedField;
               value = await parseCompressed(value);
             }
-            state.value = deepObjectMerge(state.value, { [field]: value });
+            setState(deepObjectMerge(state.value, lineJSON.R));
           }
         }
       } catch (e) {

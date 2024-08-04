@@ -17,7 +17,7 @@ interface LineJSON {
   }>;
 }
 
-const useReadLines = (state: Ref<State>) => {
+const useReadLines = (state: Ref<State>, setState: (newState: any) => void) => {
   const readLines = async () => {
     try {
       const response = await fetch("prueba.data.txt");
@@ -48,6 +48,7 @@ const useReadLines = (state: Ref<State>) => {
                   lineJSON.R["Position.z"]
                 );
               }
+              setState(deepObjectMerge(state.value, lineJSON.R));
               state.value = deepObjectMerge(state.value, lineJSON.R);
             }
             if (lineJSON.M) {
@@ -59,6 +60,7 @@ const useReadLines = (state: Ref<State>) => {
                   field = parsedField;
                   value = parseCompressed(value);
                 }
+                setState(deepObjectMerge(state.value, { [field]: value }));
                 state.value = deepObjectMerge(state.value, { [field]: value });
               }
             }

@@ -1,29 +1,23 @@
 <script setup lang="ts">
-import { defineProps, toRefs, PropType, watch, ref } from 'vue';
-import { RaceControlMessages } from '../interfaces/RaceControlMessages.interface';
+import { watch, ref } from 'vue';
+import { useStateStore } from '../store/state';
+import { storeToRefs } from 'pinia';
 
-const props = defineProps({
-    raceControlMessages: {
-        type: Object as PropType<RaceControlMessages>,
-        required: true
-    }
-});
-
-const { raceControlMessages } = toRefs(props);
-
-/* const sortedMessages = computed(() => {
-    return raceControlMessages.value?.Messages?.sort((a, b) => a.Utc - b.Utc);
-}); */
-
+const stateStore = useStateStore();
+const { raceControlMessages } = storeToRefs(stateStore);
 const sortedMessages = ref([]);
 
 watch(raceControlMessages, (newValue) => {
     if (newValue?.Messages) {
+        console.log('newValue!!', newValue.Messages);
+        if (!Array.isArray(newValue.Messages)) {
+            newValue.Messages = Object.values(newValue.Messages);
+        }
+        console.log('newValue!!', newValue.Messages);
         const newValueFormatted = newValue.Messages.map(message => {
             const date = new Date(message.Utc);
             const options = { hour: '2-digit', minute: '2-digit' };
             const timeString = date.toLocaleTimeString('en-GB', options);
-            console.log('message', message, 'timeString', timeString);
             return {
                 ...message,
                 hour: timeString
@@ -41,9 +35,9 @@ watch(raceControlMessages, (newValue) => {
     <div class="race-control-container">
         <div class="title">Race Control Messages</div>
         <div class="race-control-messages">
-            <div v-for="(message, index) in raceControlMessages" :key="index" class="race-control-message">
+            <div v-for="(message, index) in sortedMessages" :key="index" class="race-control-message">
                 <span class="message-text">{{ message.Message }}</span>
-                <span class="message-hour">{{ message.hour }}</span>
+                <span class="message-hour">{{ message?.hour }}</span>
             </div>
         </div>
     </div>

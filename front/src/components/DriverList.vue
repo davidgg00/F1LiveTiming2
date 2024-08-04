@@ -1,14 +1,12 @@
 <script setup lang="ts">
 
-import { PropType, defineProps, toRefs, watch, ref } from 'vue';
-/* import DriverComponent from './Driver.vue';
-import { CarData } from '../interfaces/CarData'; */
-import { TimingData, TimingDataLine } from '../interfaces/TimingData.interface';
-import { DriverList } from '../interfaces/Driver.interface';
-
+import { watch, ref } from 'vue';
+import { TimingDataLine } from '../interfaces/TimingData.interface';
 import type { BodyRowClassNameFunction, Header, Item } from "vue3-easy-data-table";
 import Sector from './Sector.vue';
 import { Stint } from '../interfaces/TimingAppData.interface';
+import { useStateStore } from '../store/state';
+import { storeToRefs } from 'pinia';
 
 interface DriverDataTable {
     position?: number;
@@ -34,30 +32,19 @@ const headers: Header[] = [
     { text: "Time", value: "time" },
 ];
 
-const props = defineProps({
-    drivers: {
-        type: Array as PropType<DriverList>,
-        required: true,
-        default: [],
-    },
-    carData: Object as PropType<CarData>,
-    timingData: Object as PropType<TimingData>,
-    TimingAppData: Object,
-    timingStats: Object,
-});
-
-const { /* carData, */ timingData, timingStats, drivers, TimingAppData } = toRefs(props);
+const stateStore = useStateStore();
+const { timingData, timingStats, timingAppData, sortedDriverList } = storeToRefs(stateStore);
 
 const items = ref<Item[]>([]);
 const formatData = async () => {
     const drivers2: DriverDataTable[] = [];
-    for (const driver of drivers.value) {
+    for (const driver of sortedDriverList.value) {
         const driverNumber = driver.RacingNumber;
         const driverTiming = timingData.value?.Lines?.[driverNumber];
         const fastestLap = timingStats.value?.Lines?.[driver.RacingNumber]?.PersonalBestLapTime?.Position == 1;
 
         const stints = Object.values(
-            TimingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints ?? {}
+            timingAppData.value?.Lines?.[parseInt(driver.RacingNumber)]?.Stints ?? {}
         );
 
         const currentStint = stints ? stints[stints.length - 1] : null;
@@ -105,14 +92,14 @@ const isDriverKnockedOut: BodyRowClassNameFunction = (item: Item): string => {
     return '';
 };
 
-watch(drivers, async (newValue, oldValue) => {
+watch(sortedDriverList, async (newValue, oldValue) => {
     formatData();
 });
 
 </script>
 
 <template>
-    <div v-if="props.drivers.length > 0" class="driver-table-container">
+    <div v-if="sortedDriverList.length > 0" class="driver-table-container">
         <EasyDataTable :headers="headers" :items="items" :hide-footer="true" table-class-name="customize-table"
             header-text-direction="center" body-text-direction="center" :body-row-class-name="isDriverKnockedOut">
             <template #item-position="{ position, teamColor }">
