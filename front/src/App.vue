@@ -1,4 +1,5 @@
 <template>
+  <Loading v-model:active="isLoading" :opacity="1" :color="'#ccc'" :loader="'dots'" :background-color="'#171717'" />
   <div class="app-container">
     <HeaderInfo class="header-info" />
     <div class="main">
@@ -30,7 +31,7 @@ import { storeToRefs } from 'pinia';
 
 const stateStore = useStateStore();
 const { setState } = stateStore;
-const { state } = storeToRefs(stateStore);
+const { state, isLoading } = storeToRefs(stateStore);
 const { readLines } = useReadLines(state, setState);
 const tiempoPausa = ref<number>(0);
 const { connectWebSocket } = useWebSocket(state, setState, tiempoPausa);
@@ -44,3 +45,14 @@ onMounted(async () => {
 </script>
 
 <style scoped src="./assets/styles/app.css"></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

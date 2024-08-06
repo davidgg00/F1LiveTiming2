@@ -9,11 +9,9 @@ const sortedMessages = ref([]);
 
 watch(raceControlMessages, (newValue) => {
     if (newValue?.Messages) {
-        console.log('newValue!!', newValue.Messages);
         if (!Array.isArray(newValue.Messages)) {
             newValue.Messages = Object.values(newValue.Messages);
         }
-        console.log('newValue!!', newValue.Messages);
         const newValueFormatted = newValue.Messages.map(message => {
             const date = new Date(message.Utc);
             const options = { hour: '2-digit', minute: '2-digit' };

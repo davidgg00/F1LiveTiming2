@@ -4,9 +4,11 @@ import { computed, ref } from "vue";
 
 export const useStateStore = defineStore("state", () => {
   const state = ref<State>({});
+  const isLoading = ref(true);
 
   const setState = (newState: Partial<State>) => {
     state.value = { ...state.value, ...newState };
+    isLoading.value = false;
   };
 
   const extrapolatedClock = computed(() => state.value.ExtrapolatedClock);
@@ -46,5 +48,6 @@ export const useStateStore = defineStore("state", () => {
     position,
     lapCount,
     sortedDriverList,
+    isLoading,
   };
 });

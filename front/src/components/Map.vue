@@ -48,6 +48,7 @@ const rotate = (x, y, a, px, py) => {
 };
 
 const fetchMapData = async () => {
+  if (typeof circuitKey.value !== 'number') return;
   const response = await fetch(`https://api.multiviewer.app/api/v1/circuits/${circuitKey.value}/2024`);
   return await response.json();
 };
@@ -104,6 +105,7 @@ const updateDriverPoints = () => {
 
 const updateMapData = async () => {
   const data = await fetchMapData();
+  if (!data) return;
   centerX.value = (Math.max(...data.x) - Math.min(...data.x)) / 2;
   centerY.value = (Math.max(...data.y) - Math.min(...data.y)) / 2;
   const fixedRotation = data.rotation + rotationFIX;
@@ -126,13 +128,16 @@ watch(position, () => {
 watch(circuitKey, () => {
   fetchMapData();
   updateMapData();
-}, { immediate: true });
+}, { immediate: true, deep: true });
 
 onMounted(async () => {
   await updateMapData();
   setInterval(() => {
     interpolatePositions();
-  }, 100); // Adjust the interval for smoother or faster updates
+  }, 100);
+  setTimeout(() => {
+    updateDriverPoints();
+  }, 1000);
 });
 
 const pathD = computed(() => {

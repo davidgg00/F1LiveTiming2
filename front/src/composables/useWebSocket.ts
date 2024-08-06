@@ -16,8 +16,6 @@ const useWebSocket = (
 
     const socket = new WebSocket(url);
 
-    console.log(url);
-
     socket.onopen = () => {
       console.log("WebSocket connection established.");
       socket.send(
