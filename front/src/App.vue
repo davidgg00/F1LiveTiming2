@@ -11,6 +11,12 @@
       <div>
       </div>
     </div>
+    <footer class="footer">
+      <p>This live timing information is not affiliated with, endorsed, or approved by Formula 1 or any of its partners.
+        All rights to the content belong to their respective owners. This site is intended for informational purposes
+        only. For official Formula 1 content, please visit the official Formula 1 website.
+      </p>
+    </footer>
   </div>
   <div class="control-buttons">
     <button @click="readLines">Procesar archivo línea por línea</button>

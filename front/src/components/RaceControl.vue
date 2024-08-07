@@ -63,7 +63,8 @@ watch(raceControlMessages, (newValue) => {
     background-color: #161616;
     padding: 20px 0px;
     border-radius: 10px;
-    height: 20%;
+    height: 40%;
+    overflow: hidden;
 }
 
 .title {
